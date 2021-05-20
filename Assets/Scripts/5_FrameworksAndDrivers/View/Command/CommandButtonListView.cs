@@ -40,7 +40,7 @@ namespace ProjectBlue.RepulserEngine.View
             {
                 var obj = container.InstantiatePrefab(commandButtonPrefab, containerTransform);
                 var buttonView = obj.GetComponent<CommandButtonView>();
-                buttonView.Initialize(commandSetting.CommandName, commandSetting);
+                buttonView.Initialize(commandSetting);
                 list.Add(buttonView);
             }
             

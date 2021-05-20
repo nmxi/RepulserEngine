@@ -19,9 +19,9 @@ namespace ProjectBlue.RepulserEngine.View
 
         private CommandSetting myCommand;
         
-        public void Initialize(string buttonText, CommandSetting command)
+        public void Initialize(CommandSetting command)
         {
-            SetButtonText(buttonText);
+            SetButtonText($"{command.CommandName}\n{command.CommandArguments}\n{command.Memo}");
             myCommand = command;
 
             button.OnClickAsObservable().Subscribe(_ =>
