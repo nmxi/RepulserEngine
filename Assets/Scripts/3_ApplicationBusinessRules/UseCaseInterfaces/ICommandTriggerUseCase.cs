@@ -1,12 +1,13 @@
 
 
+using ProjectBlue.RepulserEngine.Domain.DataModel;
 using System;
 
 namespace ProjectBlue.RepulserEngine.UseCaseInterfaces
 {
     public interface ICommandTriggerUseCase
     {
-        IObservable<string> OnCommandTriggeredAsObservable { get; }
-        void SendCommand(string commandName);
+        IObservable<CommandSetting> OnCommandTriggeredAsObservable { get; }
+        void SendCommand(CommandSetting commandSetting);
     }
 }

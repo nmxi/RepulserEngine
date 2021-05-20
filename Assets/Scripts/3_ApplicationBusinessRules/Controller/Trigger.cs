@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using ProjectBlue.RepulserEngine.Domain.DataModel;
 using ProjectBlue.RepulserEngine.UseCaseInterfaces;
 using UniRx;
 using UnityEngine;
@@ -29,22 +30,26 @@ namespace ProjectBlue.RepulserEngine.Controllers
             this.commandSettingUseCase = commandSettingUseCase;
             this.onAirSettingUseCase = onAirSettingUseCase;
 
-            timecodeEvaluationUseCase.OnTriggerPulsedAsObservable.Subscribe(SendCommandGlobal).AddTo(disposable);
+            timecodeEvaluationUseCase.OnTriggerPulsedAsObservable
+                .Subscribe(commandName => {
+                    // TODO: CommandSettingUseCaseにGetCurrentを実装する
+                    var commandData = commandSettingUseCase.Load().FirstOrDefault(element => element.CommandName == commandName);
+
+                    SendCommandGlobal(commandData);
+                })
+                .AddTo(disposable);
 
             commandTriggerUseCase.OnCommandTriggeredAsObservable.Subscribe(SendCommandGlobal).AddTo(disposable);
         }
 
-        private void SendCommandGlobal(string command)
+        private void SendCommandGlobal(CommandSetting commandData)
         {
 
             if (!onAirSettingUseCase.OnAirSettingViewModel.IsOnAir)
             {
-                Debug.Log($"Current not on air. but this command triggered : {command}");
+                Debug.Log($"Current not on air. but this command triggered : {commandData.CommandName}");
                 return;
             }
-
-            // TODO: CommandSettingUseCaseにGetCurrentを実装する
-            var commandData = commandSettingUseCase.Load().FirstOrDefault(element => element.CommandName == command);
 
             var endPoints = endPointSettingUseCase.GetCurrent();
             foreach (var endPoint in endPoints)

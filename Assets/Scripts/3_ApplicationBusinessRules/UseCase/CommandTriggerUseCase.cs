@@ -1,4 +1,6 @@
 using System;
+using ProjectBlue.RepulserEngine.Domain.DataModel;
+using ProjectBlue.RepulserEngine.Presentation;
 using ProjectBlue.RepulserEngine.UseCaseInterfaces;
 using UniRx;
 
@@ -7,18 +9,29 @@ namespace ProjectBlue.RepulserEngine.Domain.UseCase
 
     public class CommandTriggerUseCase : ICommandTriggerUseCase, IDisposable
     {
+        private ICommandTriggerPresenter commandTriggerPresenter;
 
-        public IObservable<string> OnCommandTriggeredAsObservable => onCommandTriggeredSubject;
+        public IObservable<CommandSetting> OnCommandTriggeredAsObservable => onCommandTriggeredSubject;
         
-        private Subject<string> onCommandTriggeredSubject = new Subject<string>();
+        private Subject<CommandSetting> onCommandTriggeredSubject = new Subject<CommandSetting>();
 
-        public void SendCommand(string commandName)
+        private CompositeDisposable disposable = new CompositeDisposable();
+
+        public CommandTriggerUseCase(ICommandTriggerPresenter commandTriggerPresenter)
         {
-            onCommandTriggeredSubject.OnNext(commandName);
+            this.commandTriggerPresenter = commandTriggerPresenter;
+
+            commandTriggerPresenter.OnTriggerAsObservable.Subscribe(SendCommand).AddTo(disposable);
+        }
+
+        public void SendCommand(CommandSetting commandSetting)
+        {
+            onCommandTriggeredSubject.OnNext(commandSetting);
         }
 
         public void Dispose()
         {
+            disposable.Dispose();
             onCommandTriggeredSubject.Dispose();
         }
     }
