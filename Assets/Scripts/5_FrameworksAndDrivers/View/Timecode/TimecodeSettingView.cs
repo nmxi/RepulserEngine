@@ -24,6 +24,8 @@ namespace ProjectBlue.RepulserEngine.View
         public override TimecodeSetting Data => data;
         private TimecodeSetting data = new TimecodeSetting();
 
+        private List<CommandSetting> commandSettings;
+
         private void Start()
         {
             Observable.Merge(
@@ -37,7 +39,7 @@ namespace ProjectBlue.RepulserEngine.View
             {
                 SetDirty();
 
-                data = ParseData(hourField.text, minuteField.text, secondField.text, frameField.text, dropdown.options[dropdown.value].text);
+                data = ParseData(hourField.text, minuteField.text, secondField.text, frameField.text, commandSettings[dropdown.value - 1]); //index=0はnullなので-1
                 if (data == null)
                 {
                     Invalid();
@@ -57,13 +59,14 @@ namespace ProjectBlue.RepulserEngine.View
         // プルダウンオプションの種類をCommandリストと同期
         private void UpdateOptionList(IEnumerable<CommandSetting> list)
         {
-            
+            commandSettings = new List<CommandSetting>(list);
+
             var optionList = new List<TMP_Dropdown.OptionData>();
                 
             optionList.Add(new TMP_Dropdown.OptionData("None"));
             
             optionList.AddRange(list
-                .Select(commandSetting => new TMP_Dropdown.OptionData(commandSetting.CommandName))
+                .Select(commandSetting => new TMP_Dropdown.OptionData($"/{commandSetting.CommandName} arg={commandSetting.CommandArguments} memo={commandSetting.Memo}"))
                 .ToList());
                 
             dropdown.options = optionList;
@@ -108,7 +111,7 @@ namespace ProjectBlue.RepulserEngine.View
             dropdown.value = result;
         }
 
-        private TimecodeSetting ParseData(string hour, string minute, string second, string frame, string command)
+        private TimecodeSetting ParseData(string hour, string minute, string second, string frame, CommandSetting command)
         {
 
             if (int.TryParse(hour, out var hourParsed) 

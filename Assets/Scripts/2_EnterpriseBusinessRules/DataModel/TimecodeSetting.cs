@@ -21,13 +21,18 @@ namespace ProjectBlue.RepulserEngine.Domain.DataModel
         
         public PulseState PulseState { get; private set; } = PulseState.Predecessor;
 
-        public TimecodeSetting(TimecodeData timecodeData, string connectedCommandName)
+        public TimecodeSetting(TimecodeData timecodeData, CommandSetting commandSetting)
         {
             this.timecodeData = timecodeData;
-            this.connectedCommandName = connectedCommandName;
+
+            string commandName = string.Empty;
+            if (commandSetting != null)
+                commandName = commandSetting.CommandName;
+
+            this.connectedCommandName = commandName;
         }
 
-        public TimecodeSetting() : this(new TimecodeData(), "NULL")
+        public TimecodeSetting() : this(new TimecodeData(), null)
         {
             
         }
