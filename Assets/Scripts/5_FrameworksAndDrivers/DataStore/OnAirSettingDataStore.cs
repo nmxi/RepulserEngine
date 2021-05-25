@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using HC.Common;
 using ProjectBlue.RepulserEngine.Domain.DataModel;
 using UnityEngine;
 
@@ -20,7 +21,9 @@ namespace ProjectBlue.RepulserEngine.DataStore
         {
 
             var json = JsonUtility.ToJson(onAirSettingDataModel);
-            
+
+            json = JsonFormatter.ToPrettyPrint(json, JsonFormatter.IndentType.Space);
+
             using (var sw = new StreamWriter (JsonFilePath, false)) 
             {
                 try

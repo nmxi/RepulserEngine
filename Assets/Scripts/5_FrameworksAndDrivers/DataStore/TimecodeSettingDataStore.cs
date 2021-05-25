@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using HC.Common;
 using ProjectBlue.RepulserEngine.Domain.DataModel;
 using UniRx;
 using UnityEngine;
@@ -28,7 +29,9 @@ namespace ProjectBlue.RepulserEngine.DataStore
             var target = new TimecodeSettingListForSerialize(endpointSettings);
 
             var json = JsonUtility.ToJson(target);
-            
+
+            json = JsonFormatter.ToPrettyPrint(json, JsonFormatter.IndentType.Space);
+
             using (var sw = new StreamWriter (JsonFilePath, false)) 
             {
                 try
